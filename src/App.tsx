@@ -24,10 +24,10 @@ export default function App() {
     <main className="min-h-screen bg-[#050505] text-white p-12 font-sans">
       <header className="mb-10">
         <h1 className="text-4xl font-black uppercase italic italic border-l-4 border-blue-600 pl-4">
-          UAE Attacks Monitor - Dubai & Abu Dhabi Security Dashboard
+          🇦🇪 UAE Defense Monitor
         </h1>
         <p className="sr-only">
-          Real-time monitoring of UAV drone attacks, cruise missiles, and ballistic missile interceptions in United Arab Emirates
+          Dubai & Abu Dhabi Security Dashboard. Real-time monitoring of UAV drone attacks, cruise missiles, and ballistic missile interceptions in United Arab Emirates
         </p>
       </header>
       <section className="grid grid-cols-3 gap-4 mb-8 text-center" aria-label="Attack statistics summary">
