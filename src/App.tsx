@@ -21,35 +21,38 @@ export default function App() {
     : data;
 
   return (
-    <main className="min-h-screen bg-[#050505] text-white p-12 font-sans">
-      <header className="mb-10">
-        <h1 className="text-4xl font-black uppercase italic italic border-l-4 border-blue-600 pl-4">
+    <main className="min-h-screen bg-[#050505] text-white p-4 md:p-8 lg:p-12 font-sans">
+      <header className="mb-6 md:mb-10">
+        <h1 className="text-2xl md:text-3xl lg:text-4xl font-black uppercase italic italic border-l-4 border-blue-600 pl-4">
           🇦🇪 UAE Defense Monitor
         </h1>
         <p className="sr-only">
           Dubai & Abu Dhabi Security Dashboard. Real-time monitoring of UAV drone attacks, cruise missiles, and ballistic missile interceptions in United Arab Emirates
         </p>
       </header>
-      <section className="grid grid-cols-3 gap-4 mb-8 text-center" aria-label="Attack statistics summary">
-        <div className="bg-[#111] p-4 rounded border border-white/5" aria-label="UAV drone attacks">
-          <Zap className="mx-auto text-blue-500 mb-2" aria-hidden="true"/>
-          <span className="font-bold">{totals.uav}</span> UAV Drones
+      <section className="grid grid-cols-3 gap-2 md:gap-4 mb-6 md:mb-8 text-center" aria-label="Attack statistics summary">
+        <div className="bg-[#111] p-3 md:p-4 rounded border border-white/5 text-sm md:text-base" aria-label="UAV drone attacks">
+          <Zap className="mx-auto text-blue-500 mb-1 md:mb-2 w-6 h-6 md:w-8 md:h-8" aria-hidden="true"/>
+          <span className="font-bold block text-lg md:text-xl">{totals.uav}</span>
+          <span className="text-xs md:text-sm">UAV Drones</span>
         </div>
-        <div className="bg-[#111] p-4 rounded border border-white/5" aria-label="Cruise missile attacks">
-          <Target className="mx-auto text-orange-500 mb-2" aria-hidden="true"/>
-          <span className="font-bold">{totals.cruise}</span> Cruise Missiles
+        <div className="bg-[#111] p-3 md:p-4 rounded border border-white/5 text-sm md:text-base" aria-label="Cruise missile attacks">
+          <Target className="mx-auto text-orange-500 mb-1 md:mb-2 w-6 h-6 md:w-8 md:h-8" aria-hidden="true"/>
+          <span className="font-bold block text-lg md:text-xl">{totals.cruise}</span>
+          <span className="text-xs md:text-sm">Cruise Missiles</span>
         </div>
-        <div className="bg-[#111] p-4 rounded border border-white/5" aria-label="Ballistic missile attacks">
-          <ShieldAlert className="mx-auto text-red-500 mb-2" aria-hidden="true"/>
-          <span className="font-bold">{totals.ballistic}</span> Ballistic Missiles
+        <div className="bg-[#111] p-3 md:p-4 rounded border border-white/5 text-sm md:text-base" aria-label="Ballistic missile attacks">
+          <ShieldAlert className="mx-auto text-red-500 mb-1 md:mb-2 w-6 h-6 md:w-8 md:h-8" aria-hidden="true"/>
+          <span className="font-bold block text-lg md:text-xl">{totals.ballistic}</span>
+          <span className="text-xs md:text-sm">Ballistic Missiles</span>
         </div>
       </section>
-      <div className="bg-[#111] p-6 rounded-xl border border-white/10 mb-8">
+      <div className="bg-[#111] p-4 md:p-6 rounded-xl border border-white/10 mb-6 md:mb-8">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold">Attack Trends</h2>
+          <h2 className="text-lg md:text-xl font-bold">Attack Trends</h2>
           <button
             onClick={() => setIsLogScale(!isLogScale)}
-            className={`px-4 py-2 rounded text-sm font-medium transition-colors ${
+            className={`px-3 py-1.5 md:px-4 md:py-2 rounded text-xs md:text-sm font-medium transition-colors ${
               isLogScale ? 'bg-blue-600 text-white' : 'bg-[#222] text-gray-400 hover:text-white'
             }`}
           >
@@ -86,7 +89,7 @@ export default function App() {
       </div>
 
       {/* Information Section */}
-      <div className="bg-[#111] p-6 rounded-xl border border-white/10 mb-8">
+      <div className="bg-[#111] p-4 md:p-6 rounded-xl border border-white/10 mb-6 md:mb-8">
         <div className="flex items-center gap-2 mb-4">
           <AlertCircle className="text-yellow-500" size={20} />
           <h2 className="text-lg font-bold">Important Information</h2>
