@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { AreaChart, Area, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
-import { ShieldAlert, Target, Zap, AlertCircle, Phone, ExternalLink, Twitter, Github } from "lucide-react";
+import { AreaChart, Area, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, ReferenceLine } from "recharts";
+import { ShieldAlert, Target, Zap, AlertCircle, Phone, ExternalLink, Twitter, Github, TrendingDown } from "lucide-react";
 
 export default function App() {
   const [data, setData] = useState([]);
@@ -9,6 +9,15 @@ export default function App() {
   const totals = data.reduce((acc, curr) => ({
     uav: acc.uav + curr.uav, cruise: acc.cruise + curr.cruise, ballistic: acc.ballistic + curr.ballistic
   }), { uav: 0, cruise: 0, ballistic: 0 });
+
+  // Calculate percentage decrease from first day to last day
+  const percentageDecrease = data.length > 1 ? (() => {
+    const firstDay = data[0];
+    const lastDay = data[data.length - 1];
+    const firstTotal = (firstDay?.uav || 0) + (firstDay?.cruise || 0) + (firstDay?.ballistic || 0);
+    const lastTotal = (lastDay?.uav || 0) + (lastDay?.cruise || 0) + (lastDay?.ballistic || 0);
+    return firstTotal > 0 ? Math.round(((firstTotal - lastTotal) / firstTotal) * 100) : 0;
+  })() : 0;
 
   // Transform data for log scale - replace zeros with 0.1 so they can be displayed
   const chartData = isLogScale 
@@ -20,12 +29,28 @@ export default function App() {
       }))
     : data;
 
+  // Calculate trend line for total attacks (simple moving average)
+  const dataWithTrend = data.map((d, i) => {
+    const window = 3; // 3-day moving average
+    const start = Math.max(0, i - Math.floor(window / 2));
+    const end = Math.min(data.length, i + Math.floor(window / 2) + 1);
+    const subset = data.slice(start, end);
+    const avgTotal = subset.reduce((sum, item) => sum + item.uav + item.cruise + item.ballistic, 0) / subset.length;
+    return {
+      ...d,
+      trend: Math.round(avgTotal)
+    };
+  });
+
   return (
     <main className="min-h-screen bg-[#050505] text-white p-4 md:p-8 lg:p-12 font-sans">
       <header className="mb-6 md:mb-10">
         <h1 className="text-2xl md:text-3xl lg:text-4xl font-black uppercase italic italic border-l-4 border-blue-600 pl-4">
           🇦🇪 UAE Defense Monitor
         </h1>
+        <p className="mt-2 text-sm md:text-base text-gray-400 pl-4">
+          The UAE, along with other Gulf nations, successfully intercepts virtually all incoming attacks, maintaining strong regional security
+        </p>
         <p className="sr-only">
           Dubai & Abu Dhabi Security Dashboard. Real-time monitoring of UAV drone attacks, cruise missiles, and ballistic missile interceptions in United Arab Emirates
         </p>
@@ -62,7 +87,13 @@ export default function App() {
         <div className="h-[400px]">
           <ResponsiveContainer width="100%" height="100%">
             {isLogScale ? (
-              <LineChart data={chartData}>
+              <LineChart data={dataWithTrend.map(d => ({
+                ...d,
+                uav: d.uav || 0.1,
+                cruise: d.cruise || 0.1,
+                ballistic: d.ballistic || 0.1,
+                trend: d.trend || 0.1
+              }))}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#222" vertical={false} />
                 <XAxis dataKey="date" stroke="#444" fontSize={12} />
                 <YAxis stroke="#444" fontSize={12} scale="log" domain={[0.1, 'dataMax']} />
@@ -71,9 +102,10 @@ export default function App() {
                 <Line type="monotone" dataKey="uav" name="UAVs" stroke="#3b82f6" strokeWidth={3} dot={false} />
                 <Line type="monotone" dataKey="cruise" name="Cruise" stroke="#f97316" strokeWidth={3} dot={false} />
                 <Line type="monotone" dataKey="ballistic" name="Ballistic" stroke="#ef4444" strokeWidth={3} dot={false} />
+                <Line type="monotone" dataKey="trend" name="Trend" stroke="#10b981" strokeWidth={2} strokeDasharray="5 5" dot={false} />
               </LineChart>
             ) : (
-              <AreaChart data={data}>
+              <AreaChart data={dataWithTrend}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#222" vertical={false} />
                 <XAxis dataKey="date" stroke="#444" fontSize={12} />
                 <YAxis stroke="#444" fontSize={12} />
@@ -82,10 +114,21 @@ export default function App() {
                 <Area type="monotone" dataKey="uav" name="UAVs" stroke="#3b82f6" fill="#3b82f633" strokeWidth={3} />
                 <Area type="monotone" dataKey="cruise" name="Cruise" stroke="#f97316" fill="#f9731633" strokeWidth={3} />
                 <Area type="monotone" dataKey="ballistic" name="Ballistic" stroke="#ef4444" fill="#ef444433" strokeWidth={3} />
+                <Line type="monotone" dataKey="trend" name="Trend (3-day avg)" stroke="#10b981" strokeWidth={2} strokeDasharray="5 5" dot={false} />
               </AreaChart>
             )}
           </ResponsiveContainer>
         </div>
+        
+        {/* Percentage decrease indicator */}
+        {percentageDecrease > 0 && (
+          <div className="mt-4 flex items-center justify-center gap-2 text-green-400 bg-green-400/10 py-2 px-4 rounded-lg">
+            <TrendingDown className="w-5 h-5 md:w-6 md:h-6" />
+            <span className="text-base md:text-lg font-semibold">
+              {percentageDecrease}% decrease from the first day
+            </span>
+          </div>
+        )}
       </div>
 
       {/* Information Section */}
