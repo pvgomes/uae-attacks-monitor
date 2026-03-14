@@ -1,0 +1,9 @@
+# Robots.txt for UAE Attacks Monitor
+# https://uae-attacks-monitor.github.io/
+
+User-agent: *
+Allow: /
+Disallow:
+
+# Sitemap
+Sitemap: https://uae-attacks-monitor.github.io/sitemap.xml

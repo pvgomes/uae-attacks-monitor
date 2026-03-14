@@ -21,13 +21,29 @@ export default function App() {
     : data;
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white p-12 font-sans">
-      <header className="mb-10"><h1 className="text-4xl font-black uppercase italic italic border-l-4 border-blue-600 pl-4">UAE Attacks Monitor</h1></header>
-      <div className="grid grid-cols-3 gap-4 mb-8 text-center">
-        <div className="bg-[#111] p-4 rounded border border-white/5"><Zap className="mx-auto text-blue-500 mb-2"/>{totals.uav} UAVs</div>
-        <div className="bg-[#111] p-4 rounded border border-white/5"><Target className="mx-auto text-orange-500 mb-2"/>{totals.cruise} Cruise</div>
-        <div className="bg-[#111] p-4 rounded border border-white/5"><ShieldAlert className="mx-auto text-red-500 mb-2"/>{totals.ballistic} Ballistic</div>
-      </div>
+    <main className="min-h-screen bg-[#050505] text-white p-12 font-sans">
+      <header className="mb-10">
+        <h1 className="text-4xl font-black uppercase italic italic border-l-4 border-blue-600 pl-4">
+          UAE Attacks Monitor - Dubai & Abu Dhabi Security Dashboard
+        </h1>
+        <p className="sr-only">
+          Real-time monitoring of UAV drone attacks, cruise missiles, and ballistic missile interceptions in United Arab Emirates
+        </p>
+      </header>
+      <section className="grid grid-cols-3 gap-4 mb-8 text-center" aria-label="Attack statistics summary">
+        <div className="bg-[#111] p-4 rounded border border-white/5" aria-label="UAV drone attacks">
+          <Zap className="mx-auto text-blue-500 mb-2" aria-hidden="true"/>
+          <span className="font-bold">{totals.uav}</span> UAV Drones
+        </div>
+        <div className="bg-[#111] p-4 rounded border border-white/5" aria-label="Cruise missile attacks">
+          <Target className="mx-auto text-orange-500 mb-2" aria-hidden="true"/>
+          <span className="font-bold">{totals.cruise}</span> Cruise Missiles
+        </div>
+        <div className="bg-[#111] p-4 rounded border border-white/5" aria-label="Ballistic missile attacks">
+          <ShieldAlert className="mx-auto text-red-500 mb-2" aria-hidden="true"/>
+          <span className="font-bold">{totals.ballistic}</span> Ballistic Missiles
+        </div>
+      </section>
       <div className="bg-[#111] p-6 rounded-xl border border-white/10 mb-8">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold">Attack Trends</h2>
@@ -154,6 +170,6 @@ export default function App() {
           </div>
         </div>
       </div>
-    </div>
+    </main>
   );
 }
