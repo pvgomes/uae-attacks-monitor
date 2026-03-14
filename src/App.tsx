@@ -112,6 +112,10 @@ export default function App() {
 
             <h3 className="text-sm font-semibold uppercase text-gray-500 mt-6 mb-3">Updates</h3>
             <div className="space-y-2">
+              <a href="https://www.instagram.com/modgovae/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-blue-400 hover:text-blue-300">
+                <ExternalLink size={16} />
+                Instagram Ministry of Defence - UAE
+              </a>
               <a href="https://x.com/ADMediaOffice" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-blue-400 hover:text-blue-300">
                 <Twitter size={16} />
                 Abu Dhabi Media Office
