@@ -1,1 +1,86 @@
-[{"date":"Mar 01","uav":541,"cruise":2,"ballistic":165},{"date":"Mar 02","uav":148,"cruise":6,"ballistic":9},{"date":"Mar 03","uav":123,"cruise":0,"ballistic":12},{"date":"Mar 04","uav":129,"cruise":0,"ballistic":3},{"date":"Mar 05","uav":131,"cruise":0,"ballistic":7},{"date":"Mar 06","uav":112,"cruise":0,"ballistic":9},{"date":"Mar 07","uav":121,"cruise":0,"ballistic":16},{"date":"Mar 08","uav":117,"cruise":0,"ballistic":17},{"date":"Mar 09","uav":18,"cruise":0,"ballistic":15},{"date":"Mar 10","uav":35,"cruise":0,"ballistic":9},{"date":"Mar 11","uav":33,"cruise":4,"ballistic":8},{"date":"Mar 12","uav":33,"cruise":4,"ballistic":8},{"date":"Mar 13","uav":27,"cruise":0,"ballistic":7},{"date":"Mar 14","uav":33,"cruise":0,"ballistic":9}]
+[
+    {
+        "date": "Mar 01",
+        "uav": 541,
+        "cruise": 2,
+        "ballistic": 165
+    },
+    {
+        "date": "Mar 02",
+        "uav": 148,
+        "cruise": 6,
+        "ballistic": 9
+    },
+    {
+        "date": "Mar 03",
+        "uav": 123,
+        "cruise": 0,
+        "ballistic": 12
+    },
+    {
+        "date": "Mar 04",
+        "uav": 129,
+        "cruise": 0,
+        "ballistic": 3
+    },
+    {
+        "date": "Mar 05",
+        "uav": 131,
+        "cruise": 0,
+        "ballistic": 7
+    },
+    {
+        "date": "Mar 06",
+        "uav": 112,
+        "cruise": 0,
+        "ballistic": 9
+    },
+    {
+        "date": "Mar 07",
+        "uav": 121,
+        "cruise": 0,
+        "ballistic": 16
+    },
+    {
+        "date": "Mar 08",
+        "uav": 117,
+        "cruise": 0,
+        "ballistic": 17
+    },
+    {
+        "date": "Mar 09",
+        "uav": 18,
+        "cruise": 0,
+        "ballistic": 15
+    },
+    {
+        "date": "Mar 10",
+        "uav": 35,
+        "cruise": 0,
+        "ballistic": 9
+    },
+    {
+        "date": "Mar 11",
+        "uav": 33,
+        "cruise": 4,
+        "ballistic": 8
+    },
+    {
+        "date": "Mar 12",
+        "uav": 33,
+        "cruise": 4,
+        "ballistic": 8
+    },
+    {
+        "date": "Mar 13",
+        "uav": 27,
+        "cruise": 0,
+        "ballistic": 7
+    },
+    {
+        "date": "Mar 14",
+        "uav": 33,
+        "cruise": 0,
+        "ballistic": 9
+    }
+]

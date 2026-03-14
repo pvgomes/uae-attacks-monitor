@@ -38,7 +38,7 @@ docker run --rm -v $(pwd):/app -w /app node:20-alpine sh -c "npm install && npx 
 ```
 
 📈 Updating Data
-Open public/data.json.
+Open [public/data.json](/public/data.json)
 
 Append the latest daily statistics.
 
