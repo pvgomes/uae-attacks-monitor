@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { AreaChart, Area, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
-import { ShieldAlert, Target, Zap, AlertCircle, Phone, ExternalLink, Twitter } from "lucide-react";
+import { ShieldAlert, Target, Zap, AlertCircle, Phone, ExternalLink, Twitter, Github } from "lucide-react";
 
 export default function App() {
   const [data, setData] = useState([]);
@@ -170,6 +170,22 @@ export default function App() {
           </div>
         </div>
       </div>
+
+      {/* GitHub Contribution Link */}
+      <footer className="mt-12 text-center">
+        <a 
+          href="https://github.com/pvgomes/uae-attacks-monitor" 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          className="inline-flex items-center gap-2 px-6 py-3 bg-[#111] border border-white/10 rounded-lg hover:bg-[#222] transition-colors"
+        >
+          <Github size={20} />
+          <span>Contribute on GitHub</span>
+        </a>
+        <p className="mt-4 text-sm text-gray-500">
+          Help improve this project by contributing data updates or code enhancements
+        </p>
+      </footer>
     </main>
   );
 }
