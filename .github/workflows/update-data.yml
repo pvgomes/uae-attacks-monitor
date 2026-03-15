@@ -1,0 +1,125 @@
+name: Update Attack Data
+
+on:
+  # Manual trigger with inputs
+  workflow_dispatch:
+    inputs:
+      date:
+        description: 'Date to update (YYYY-MM-DD). Leave empty for today.'
+        required: false
+        type: string
+      uav:
+        description: 'Number of UAV attacks'
+        required: true
+        default: '0'
+        type: string
+      cruise:
+        description: 'Number of Cruise missile attacks'
+        required: true
+        default: '0'
+        type: string
+      ballistic:
+        description: 'Number of Ballistic missile attacks'
+        required: true
+        default: '0'
+        type: string
+  
+  # Schedule to run daily at 23:00 UTC (can be adjusted)
+  # Uncomment the lines below to enable scheduled updates
+  # schedule:
+  #   - cron: '0 23 * * *'
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install @supabase/supabase-js
+
+      - name: Update data (Manual trigger)
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          # Create a temporary data update script
+          cat << 'EOF' > temp-update.js
+          const { createClient } = require('@supabase/supabase-js');
+          
+          const supabase = createClient(
+            process.env.SUPABASE_URL,
+            process.env.SUPABASE_SERVICE_ROLE_KEY,
+            {
+              auth: {
+                autoRefreshToken: false,
+                persistSession: false
+              }
+            }
+          );
+          
+          const date = '${{ inputs.date }}' || new Date().toISOString().split('T')[0];
+          const uav = parseInt('${{ inputs.uav }}');
+          const cruise = parseInt('${{ inputs.cruise }}');
+          const ballistic = parseInt('${{ inputs.ballistic }}');
+          
+          async function update() {
+            console.log(`Updating ${date}: UAV=${uav}, Cruise=${cruise}, Ballistic=${ballistic}`);
+            
+            const { data, error } = await supabase
+              .from('attack_data')
+              .upsert({
+                date: date,
+                uav_attacks: uav,
+                cruise_attacks: cruise,
+                ballistic_attacks: ballistic
+              }, {
+                onConflict: 'date'
+              });
+            
+            if (error) {
+              console.error('Error:', error);
+              process.exit(1);
+            }
+            
+            console.log('✅ Data updated successfully');
+          }
+          
+          update().catch(err => {
+            console.error('Fatal error:', err);
+            process.exit(1);
+          });
+          EOF
+          
+          node temp-update.js
+
+      - name: Update data (Scheduled)
+        if: github.event_name == 'schedule'
+        env:
+          SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          echo "⚠️  Scheduled updates require additional setup"
+          echo "You need to implement a data source for automatic updates"
+          echo "For now, use manual workflow dispatch"
+
+      # Optional: Trigger a rebuild of the site after data update
+      - name: Trigger site rebuild
+        if: success()
+        run: |
+          echo "Data updated successfully"
+          # You could trigger a deployment workflow here if needed
+          # For example, using repository dispatch:
+          # curl -X POST \
+          #   -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          #   -H "Accept: application/vnd.github.v3+json" \
+          #   https://api.github.com/repos/${{ github.repository }}/dispatches \
+          #   -d '{"event_type":"data-updated"}'
