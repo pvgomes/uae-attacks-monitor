@@ -20,6 +20,7 @@ const newsChannels: NewsChannel[] = [
   { name: "India Today", embedId: "cTZLVaugpL0", country: "IN" },
   { name: "CNN Brazil", embedId: "VYSx7Qxr3nI", country: "BR" },
   { name: "TVP WORLD", embedId: "m4mVcUReR6Y", country: "PL" },
+  { name: "ABC News", embedId: "vOTiJkg1voo", country: "AU" },
 ];
 
 export default function News() {

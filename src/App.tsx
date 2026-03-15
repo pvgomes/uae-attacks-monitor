@@ -4,20 +4,22 @@ import { Github, Calendar } from "lucide-react";
 import Dashboard from "./Dashboard";
 import About from "./About";
 import News from "./News";
+import { fetchLatestAttackData } from "./services/dataService";
 
 function Layout({ children }: { children: React.ReactNode }) {
   const [lastUpdate, setLastUpdate] = useState("");
   const location = useLocation();
 
   useEffect(() => {
-    fetch("./data.json")
-      .then(res => res.json())
-      .then(data => {
-        if (data.length > 0) {
-          const lastEntry = data[data.length - 1];
+    fetchLatestAttackData()
+      .then(lastEntry => {
+        if (lastEntry) {
           // Add current year to the date
           setLastUpdate(`${lastEntry.date}, 2024`);
         }
+      })
+      .catch(error => {
+        console.error("Failed to fetch last update:", error);
       });
   }, []);
 

@@ -1,14 +1,34 @@
 import React, { useEffect, useState } from "react";
 import { AreaChart, Area, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import { ShieldAlert, Target, Zap, AlertCircle, Phone, ExternalLink, Twitter, Github, TrendingDown } from "lucide-react";
+import { fetchAttackData } from "./services/dataService";
 
 export default function Dashboard() {
   const [data, setData] = useState([]);
   const [isLogScale, setIsLogScale] = useState(false);
-  useEffect(() => { fetch("./data.json").then(res => res.json()).then(setData); }, []);
+  const [isLoading, setIsLoading] = useState(true);
+  
+  useEffect(() => {
+    fetchAttackData()
+      .then(setData)
+      .catch(error => {
+        console.error("Failed to fetch attack data:", error);
+        setData([]);
+      })
+      .finally(() => setIsLoading(false));
+  }, []);
   const totals = data.reduce((acc, curr) => ({
     uav: acc.uav + curr.uav, cruise: acc.cruise + curr.cruise, ballistic: acc.ballistic + curr.ballistic
   }), { uav: 0, cruise: 0, ballistic: 0 });
+
+  // Show loading state
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-gray-400">Loading attack data...</div>
+      </div>
+    );
+  }
 
   // Calculate percentage decrease from first day to last day
   const percentageDecrease = data.length > 1 ? (() => {
