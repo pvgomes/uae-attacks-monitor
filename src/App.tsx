@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Link, useLocation } from "react
 import { Github, Calendar } from "lucide-react";
 import Dashboard from "./Dashboard";
 import About from "./About";
+import News from "./News";
 
 function Layout({ children }: { children: React.ReactNode }) {
   const [lastUpdate, setLastUpdate] = useState("");
@@ -60,6 +61,14 @@ function Layout({ children }: { children: React.ReactNode }) {
             >
               About
             </Link>
+            <Link 
+              to="/news" 
+              className={`text-sm font-medium transition-colors ${
+                location.pathname === "/news" ? "text-white" : "text-gray-400 hover:text-white"
+              }`}
+            >
+              News
+            </Link>
           </div>
         </nav>
       </header>
@@ -92,6 +101,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<Layout><Dashboard /></Layout>} />
         <Route path="/about" element={<Layout><About /></Layout>} />
+        <Route path="/news" element={<Layout><News /></Layout>} />
       </Routes>
     </Router>
   );
