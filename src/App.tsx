@@ -49,7 +49,7 @@ export default function App() {
           🇦🇪 UAE Defense Monitor
         </h1>
         <p className="mt-2 text-sm md:text-base text-gray-400 pl-4">
-          The UAE, along with other Gulf nations, successfully intercepts virtually all incoming attacks, maintaining strong regional security
+          UAE successfully intercepts virtually all incoming attacks. This website aims to show you the current data of attacks on UAE, based on official public statements
         </p>
         <p className="sr-only">
           Dubai & Abu Dhabi Security Dashboard. Real-time monitoring of UAV drone attacks, cruise missiles, and ballistic missile interceptions in United Arab Emirates
@@ -173,6 +173,10 @@ export default function App() {
               <a href="https://x.com/NCEMAUAE" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-blue-400 hover:text-blue-300">
                 <Twitter size={16} />
                 National Emergency Crisis and Disaster Management Authority
+              </a>
+              <a href="https://hormuzstraitmonitor.com/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-blue-400 hover:text-blue-300">
+                <ExternalLink size={16} />
+                Strait of hormuz monitor - real-time tracking of maritime security incidents in the region
               </a>
             </div>
           </div>
