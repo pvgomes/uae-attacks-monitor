@@ -11,12 +11,15 @@ const newsChannels: NewsChannel[] = [
   { name: "Bloomberg", embedId: "iEpJwprxDdk", country: "US" },
   { name: "Sky News", embedId: "YDvsBbKfLPA", country: "UK" },
   { name: "Euronews", embedId: "pykpO5kQJ98", country: "EU" },
-  { name: "DW", embedId: "pqabxBKzZ6M", country: "DE" },
+  { name: "DW", embedId: "LuKwFajn37U", country: "DE" },
   { name: "CNBC", embedId: "9NyxcX3rhQs", country: "US" },
-  { name: "CNN", embedId: "uyYQbRO6sNA", country: "US" },
-  { name: "France 24", embedId: "h3MuIUNCCzI", country: "FR" },
-  { name: "Al Arabiya", embedId: "7P2RvFJ5J1g", country: "UAE" },
+  { name: "CNN", embedId: "awA4cInzpx8", country: "US" },
+  { name: "France 24", embedId: "Ap-UM1O9RBU", country: "FR" },
+  { name: "Al Arabiya", embedId: "rXnG4eiVVdM", country: "UAE" },
   { name: "Al Jazeera", embedId: "gCNeDWCI0vo", country: "QA" },
+  { name: "India Today", embedId: "cTZLVaugpL0", country: "IN" },
+  { name: "CNN Brazil", embedId: "VYSx7Qxr3nI", country: "BR" },
+  { name: "TVP WORLD", embedId: "m4mVcUReR6Y", country: "PL" },
 ];
 
 export default function News() {
