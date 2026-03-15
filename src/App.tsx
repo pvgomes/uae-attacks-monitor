@@ -1,230 +1,72 @@
 import React, { useEffect, useState } from "react";
-import { AreaChart, Area, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend, ReferenceLine } from "recharts";
-import { ShieldAlert, Target, Zap, AlertCircle, Phone, ExternalLink, Twitter, Github, TrendingDown } from "lucide-react";
+import { BrowserRouter as Router, Routes, Route, Link, useLocation } from "react-router-dom";
+import { Github, Calendar } from "lucide-react";
+import Dashboard from "./Dashboard";
+import About from "./About";
 
-export default function App() {
-  const [data, setData] = useState([]);
-  const [isLogScale, setIsLogScale] = useState(false);
-  useEffect(() => { fetch("./data.json").then(res => res.json()).then(setData); }, []);
-  const totals = data.reduce((acc, curr) => ({
-    uav: acc.uav + curr.uav, cruise: acc.cruise + curr.cruise, ballistic: acc.ballistic + curr.ballistic
-  }), { uav: 0, cruise: 0, ballistic: 0 });
+function Layout({ children }: { children: React.ReactNode }) {
+  const [lastUpdate, setLastUpdate] = useState("");
+  const location = useLocation();
 
-  // Calculate percentage decrease from first day to last day
-  const percentageDecrease = data.length > 1 ? (() => {
-    const firstDay = data[0];
-    const lastDay = data[data.length - 1];
-    const firstTotal = (firstDay?.uav || 0) + (firstDay?.cruise || 0) + (firstDay?.ballistic || 0);
-    const lastTotal = (lastDay?.uav || 0) + (lastDay?.cruise || 0) + (lastDay?.ballistic || 0);
-    return firstTotal > 0 ? Math.round(((firstTotal - lastTotal) / firstTotal) * 100) : 0;
-  })() : 0;
-
-  // Transform data for log scale - replace zeros with 0.1 so they can be displayed
-  const chartData = isLogScale 
-    ? data.map(d => ({
-        ...d,
-        uav: d.uav || 0.1,
-        cruise: d.cruise || 0.1,
-        ballistic: d.ballistic || 0.1
-      }))
-    : data;
-
-  // Calculate trend line for total attacks (simple moving average)
-  const dataWithTrend = data.map((d, i) => {
-    const window = 3; // 3-day moving average
-    const start = Math.max(0, i - Math.floor(window / 2));
-    const end = Math.min(data.length, i + Math.floor(window / 2) + 1);
-    const subset = data.slice(start, end);
-    const avgTotal = subset.reduce((sum, item) => sum + item.uav + item.cruise + item.ballistic, 0) / subset.length;
-    return {
-      ...d,
-      trend: Math.round(avgTotal)
-    };
-  });
+  useEffect(() => {
+    fetch("./data.json")
+      .then(res => res.json())
+      .then(data => {
+        if (data.length > 0) {
+          const lastEntry = data[data.length - 1];
+          // Add current year to the date
+          setLastUpdate(`${lastEntry.date}, 2024`);
+        }
+      });
+  }, []);
 
   return (
     <main className="min-h-screen bg-[#050505] text-white p-4 md:p-8 lg:p-12 font-sans">
       <header className="mb-6 md:mb-10">
-        <h1 className="text-2xl md:text-3xl lg:text-4xl font-black uppercase italic italic border-l-4 border-blue-600 pl-4">
-          🇦🇪 UAE Defense Monitor
-        </h1>
-        <p className="mt-2 text-sm md:text-base text-gray-400 pl-4">
-          UAE successfully intercepts virtually all incoming attacks. This website aims to show you the current data of attacks on UAE, based on official public statements
-        </p>
-        <p className="sr-only">
-          Dubai & Abu Dhabi Security Dashboard. Real-time monitoring of UAV drone attacks, cruise missiles, and ballistic missile interceptions in United Arab Emirates
-        </p>
+        <div className="flex justify-between items-start">
+          <div>
+            <h1 className="text-2xl md:text-3xl lg:text-4xl font-black uppercase italic border-l-4 border-blue-600 pl-4">
+              🇦🇪 UAE Defense Monitor
+            </h1>
+            <p className="mt-2 text-sm md:text-base text-gray-400 pl-4">
+              UAE successfully intercepts virtually all incoming attacks. This website aims to show you the current data of attacks on UAE, based on official public statements
+            </p>
+            <p className="sr-only">
+              Dubai & Abu Dhabi Security Dashboard. Real-time monitoring of UAV drone attacks, cruise missiles, and ballistic missile interceptions in United Arab Emirates
+            </p>
+          </div>
+          {lastUpdate && (
+            <div className="text-gray-400 text-sm flex items-center gap-2">
+              <Calendar size={16} />
+              <span>Updated {lastUpdate}</span>
+            </div>
+          )}
+        </div>
+        <nav className="mt-6 pl-4">
+          <div className="flex gap-6">
+            <Link 
+              to="/" 
+              className={`text-sm font-medium transition-colors ${
+                location.pathname === "/" ? "text-white" : "text-gray-400 hover:text-white"
+              }`}
+            >
+              Dashboard
+            </Link>
+            <Link 
+              to="/about" 
+              className={`text-sm font-medium transition-colors ${
+                location.pathname === "/about" ? "text-white" : "text-gray-400 hover:text-white"
+              }`}
+            >
+              About
+            </Link>
+          </div>
+        </nav>
       </header>
-      <section className="grid grid-cols-3 gap-2 md:gap-4 mb-6 md:mb-8 text-center" aria-label="Attack statistics summary">
-        <div className="bg-[#111] p-3 md:p-4 rounded border border-white/5 text-sm md:text-base" aria-label="UAV drone attacks">
-          <Zap className="mx-auto text-blue-500 mb-1 md:mb-2 w-6 h-6 md:w-8 md:h-8" aria-hidden="true"/>
-          <span className="font-bold block text-lg md:text-xl">{totals.uav}</span>
-          <span className="text-xs md:text-sm">UAV Drones</span>
-        </div>
-        <div className="bg-[#111] p-3 md:p-4 rounded border border-white/5 text-sm md:text-base" aria-label="Cruise missile attacks">
-          <Target className="mx-auto text-orange-500 mb-1 md:mb-2 w-6 h-6 md:w-8 md:h-8" aria-hidden="true"/>
-          <span className="font-bold block text-lg md:text-xl">{totals.cruise}</span>
-          <span className="text-xs md:text-sm">Cruise Missiles</span>
-        </div>
-        <div className="bg-[#111] p-3 md:p-4 rounded border border-white/5 text-sm md:text-base" aria-label="Ballistic missile attacks">
-          <ShieldAlert className="mx-auto text-red-500 mb-1 md:mb-2 w-6 h-6 md:w-8 md:h-8" aria-hidden="true"/>
-          <span className="font-bold block text-lg md:text-xl">{totals.ballistic}</span>
-          <span className="text-xs md:text-sm">Ballistic Missiles</span>
-        </div>
-      </section>
-      <div className="bg-[#111] p-4 md:p-6 rounded-xl border border-white/10 mb-6 md:mb-8">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="text-lg md:text-xl font-bold">Attack Trends</h2>
-          <button
-            onClick={() => setIsLogScale(!isLogScale)}
-            className={`px-3 py-1.5 md:px-4 md:py-2 rounded text-xs md:text-sm font-medium transition-colors ${
-              isLogScale ? 'bg-blue-600 text-white' : 'bg-[#222] text-gray-400 hover:text-white'
-            }`}
-          >
-            Log Scale
-          </button>
-        </div>
-        <div className="h-[400px]">
-          <ResponsiveContainer width="100%" height="100%">
-            {isLogScale ? (
-              <LineChart data={dataWithTrend.map(d => ({
-                ...d,
-                uav: d.uav || 0.1,
-                cruise: d.cruise || 0.1,
-                ballistic: d.ballistic || 0.1,
-                trend: d.trend || 0.1
-              }))}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#222" vertical={false} />
-                <XAxis dataKey="date" stroke="#444" fontSize={12} />
-                <YAxis stroke="#444" fontSize={12} scale="log" domain={[0.1, 'dataMax']} />
-                <Tooltip contentStyle={{ backgroundColor: "#111", border: "1px solid #333" }} />
-                <Legend />
-                <Line type="monotone" dataKey="uav" name="UAVs" stroke="#3b82f6" strokeWidth={3} dot={false} />
-                <Line type="monotone" dataKey="cruise" name="Cruise" stroke="#f97316" strokeWidth={3} dot={false} />
-                <Line type="monotone" dataKey="ballistic" name="Ballistic" stroke="#ef4444" strokeWidth={3} dot={false} />
-                <Line type="monotone" dataKey="trend" name="Trend" stroke="#10b981" strokeWidth={2} strokeDasharray="5 5" dot={false} />
-              </LineChart>
-            ) : (
-              <AreaChart data={dataWithTrend}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#222" vertical={false} />
-                <XAxis dataKey="date" stroke="#444" fontSize={12} />
-                <YAxis stroke="#444" fontSize={12} />
-                <Tooltip contentStyle={{ backgroundColor: "#111", border: "1px solid #333" }} />
-                <Legend />
-                <Area type="monotone" dataKey="uav" name="UAVs" stroke="#3b82f6" fill="#3b82f633" strokeWidth={3} />
-                <Area type="monotone" dataKey="cruise" name="Cruise" stroke="#f97316" fill="#f9731633" strokeWidth={3} />
-                <Area type="monotone" dataKey="ballistic" name="Ballistic" stroke="#ef4444" fill="#ef444433" strokeWidth={3} />
-                <Line type="monotone" dataKey="trend" name="Trend (3-day avg)" stroke="#10b981" strokeWidth={2} strokeDasharray="5 5" dot={false} />
-              </AreaChart>
-            )}
-          </ResponsiveContainer>
-        </div>
-        
-        {/* Percentage decrease indicator */}
-        {percentageDecrease > 0 && (
-          <div className="mt-4 flex items-center justify-center gap-2 text-green-400 bg-green-400/10 py-2 px-4 rounded-lg">
-            <TrendingDown className="w-5 h-5 md:w-6 md:h-6" />
-            <span className="text-base md:text-lg font-semibold">
-              {percentageDecrease}% decrease from the first day
-            </span>
-          </div>
-        )}
+      <div className="flex-1">
+        {children}
       </div>
-
-      {/* Information Section */}
-      <div className="bg-[#111] p-4 md:p-6 rounded-xl border border-white/10 mb-6 md:mb-8">
-        <div className="flex items-center gap-2 mb-4">
-          <AlertCircle className="text-yellow-500" size={20} />
-          <h2 className="text-lg font-bold">Important Information</h2>
-        </div>
-        <p className="text-gray-400 mb-6">
-          This is an <span className="text-yellow-500 font-medium">unofficial</span> website. All data is manually transcribed from official public statements by the UAE Ministry of Interior (MOI) and other government sources.
-        </p>
-
-        <div className="grid md:grid-cols-2 gap-6">
-          {/* Official Sources */}
-          <div>
-            <h3 className="text-sm font-semibold uppercase text-gray-500 mb-3">Official Sources</h3>
-            <div className="space-y-2">
-              <a href="https://ncema.gov.ae" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-blue-400 hover:text-blue-300">
-                <ExternalLink size={16} />
-                National Emergency Crisis and Disaster Management Authority
-              </a>
-              <a href="https://wam.ae" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-blue-400 hover:text-blue-300">
-                <ExternalLink size={16} />
-                Emirates News Agency (WAM)
-              </a>
-            </div>
-
-            <h3 className="text-sm font-semibold uppercase text-gray-500 mt-6 mb-3">Updates</h3>
-            <div className="space-y-2">
-              <a href="https://www.instagram.com/modgovae/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-blue-400 hover:text-blue-300">
-                <ExternalLink size={16} />
-                Instagram Ministry of Defence - UAE
-              </a>
-              <a href="https://x.com/ADMediaOffice" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-blue-400 hover:text-blue-300">
-                <Twitter size={16} />
-                Abu Dhabi Media Office
-              </a>
-              <a href="https://x.com/modgovae" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-blue-400 hover:text-blue-300">
-                <Twitter size={16} />
-                Ministry of Defence
-              </a>
-              <a href="https://x.com/NCEMAUAE" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-blue-400 hover:text-blue-300">
-                <Twitter size={16} />
-                National Emergency Crisis and Disaster Management Authority
-              </a>
-              <a href="https://hormuzstraitmonitor.com/" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-blue-400 hover:text-blue-300">
-                <ExternalLink size={16} />
-                Strait of hormuz monitor - real-time tracking of maritime security incidents in the region
-              </a>
-            </div>
-          </div>
-
-          {/* Emergency Numbers */}
-          <div>
-            <h3 className="text-sm font-semibold uppercase text-gray-500 mb-3">Emergency Numbers in UAE</h3>
-            <div className="space-y-2 font-mono">
-              <div className="flex items-center gap-3">
-                <Phone size={16} className="text-red-500" />
-                <span className="text-white">999</span>
-                <span className="text-gray-400">Police</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <Phone size={16} className="text-red-500" />
-                <span className="text-white">998</span>
-                <span className="text-gray-400">Ambulance</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <Phone size={16} className="text-red-500" />
-                <span className="text-white">997</span>
-                <span className="text-gray-400">Fire Department (Civil Defence)</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <Phone size={16} className="text-red-500" />
-                <span className="text-white">996</span>
-                <span className="text-gray-400">Coast Guard</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <Phone size={16} className="text-red-500" />
-                <span className="text-white">995</span>
-                <span className="text-gray-400">Find and Rescue</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <Phone size={16} className="text-red-500" />
-                <span className="text-white">992</span>
-                <span className="text-gray-400">Water Failure</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <Phone size={16} className="text-red-500" />
-                <span className="text-white">991</span>
-                <span className="text-gray-400">Electricity Failure</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
+      
       {/* GitHub Contribution Link */}
       <footer className="mt-12 text-center">
         <a 
@@ -243,3 +85,15 @@ export default function App() {
     </main>
   );
 }
+
+export default function App() {
+  return (
+    <Router>
+      <Routes>
+        <Route path="/" element={<Layout><Dashboard /></Layout>} />
+        <Route path="/about" element={<Layout><About /></Layout>} />
+      </Routes>
+    </Router>
+  );
+}
+
