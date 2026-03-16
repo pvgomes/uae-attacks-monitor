@@ -52,11 +52,11 @@ class DataUpdater:
     def update_single_day(self, date_str: str, uav: int, cruise: int, ballistic: int) -> bool:
         """Update or insert data for a single day"""
         try:
-            response = self.supabase.table('attack_data').upsert({
+            response = self.supabase.table('attacks').upsert({
                 'date': date_str,
-                'uav_attacks': uav,
-                'cruise_attacks': cruise,
-                'ballistic_attacks': ballistic
+                'uav': uav,
+                'cruise': cruise,
+                'ballistic': ballistic
             }, on_conflict='date').execute()
             
             print(f"✅ Updated {date_str}: UAV={uav}, Cruise={cruise}, Ballistic={ballistic}")
@@ -130,7 +130,7 @@ class DataUpdater:
     def get_recent_data(self, days: int = 7) -> None:
         """Display recent data from the database"""
         try:
-            response = self.supabase.table('attack_data')\
+            response = self.supabase.table('attacks')\
                 .select("*")\
                 .order('date', desc=True)\
                 .limit(days)\
@@ -141,7 +141,7 @@ class DataUpdater:
             print("-----------|-----|--------|----------")
             
             for record in response.data:
-                print(f"{record['date']} | {record['uav_attacks']:3d} | {record['cruise_attacks']:6d} | {record['ballistic_attacks']:9d}")
+                print(f"{record['date']} | {record['uav']:3d} | {record['cruise']:6d} | {record['ballistic']:9d}")
                 
         except Exception as e:
             print(f"❌ Error fetching data: {e}")

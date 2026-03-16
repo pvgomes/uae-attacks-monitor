@@ -105,12 +105,12 @@ function parseShortDate(shortDate, year = new Date().getFullYear()) {
 async function updateSingleDay(date, uav, cruise, ballistic) {
     try {
         const { data, error } = await supabase
-            .from('attack_data')
+            .from('attacks')
             .upsert({
                 date: date,
-                uav_attacks: uav,
-                cruise_attacks: cruise,
-                ballistic_attacks: ballistic
+                uav: uav,
+                cruise: cruise,
+                ballistic: ballistic
             }, {
                 onConflict: 'date'
             });

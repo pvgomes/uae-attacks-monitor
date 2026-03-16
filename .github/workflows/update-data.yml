@@ -75,12 +75,12 @@ jobs:
             console.log(`Updating ${date}: UAV=${uav}, Cruise=${cruise}, Ballistic=${ballistic}`);
             
             const { data, error } = await supabase
-              .from('attack_data')
+              .from('attacks')
               .upsert({
                 date: date,
-                uav_attacks: uav,
-                cruise_attacks: cruise,
-                ballistic_attacks: ballistic
+                uav: uav,
+                cruise: cruise,
+                ballistic: ballistic
               }, {
                 onConflict: 'date'
               });
