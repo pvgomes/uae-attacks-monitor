@@ -29,6 +29,8 @@ This guide explains how to securely update data in the Supabase database.
 
 ## 📊 Method 1: GitHub Actions (Recommended)
 
+**Note:** The database stores dates in "Mon DD" format (e.g., "Mar 16"). When you input dates in YYYY-MM-DD format, they will be automatically converted.
+
 ### Manual Updates via GitHub UI
 
 1. Go to **Actions** tab in your repository
@@ -70,10 +72,10 @@ To enable daily automatic updates:
 
 3. Run the script:
    ```bash
-   # Interactive mode
+   # Interactive mode (date format: YYYY-MM-DD)
    python scripts/update-data.py
 
-   # Direct update
+   # Direct update (will be converted to "Mar 15" format)
    python scripts/update-data.py --date 2024-03-15 --uav 10 --cruise 2 --ballistic 5
 
    # Show recent data
@@ -110,7 +112,7 @@ To enable daily automatic updates:
 
 ## 📁 CSV Format for Bulk Updates
 
-Create a CSV file with this format:
+Create a CSV file with this format (dates will be automatically converted to "Mar 01" format):
 
 ```csv
 date,uav,cruise,ballistic
@@ -148,6 +150,11 @@ python scripts/update-data.py --csv your-data.csv
 3. **Data not appearing on website**
    - The website caches data; wait a few minutes
    - Check Supabase dashboard to confirm data was inserted
+
+4. **"no unique or exclusion constraint" error**
+   - The scripts now handle this automatically
+   - Dates are stored in "Mon DD" format (e.g., "Mar 16")
+   - Input dates in YYYY-MM-DD format are automatically converted
    - Verify RLS policies allow reading the data
 
 ### Verifying Updates

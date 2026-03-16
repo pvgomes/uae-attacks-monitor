@@ -52,14 +52,33 @@ class DataUpdater:
     def update_single_day(self, date_str: str, uav: int, cruise: int, ballistic: int) -> bool:
         """Update or insert data for a single day"""
         try:
-            response = self.supabase.table('attacks').upsert({
-                'date': date_str,
-                'uav': uav,
-                'cruise': cruise,
-                'ballistic': ballistic
-            }, on_conflict='date').execute()
+            # Convert to short date format if it's a full date (YYYY-MM-DD)
+            if len(date_str) > 6 and '-' in date_str:
+                date_obj = datetime.strptime(date_str, '%Y-%m-%d')
+                short_date = date_obj.strftime('%b %d')
+            else:
+                short_date = date_str
             
-            print(f"✅ Updated {date_str}: UAV={uav}, Cruise={cruise}, Ballistic={ballistic}")
+            # First check if record exists
+            existing = self.supabase.table('attacks').select('*').eq('date', short_date).execute()
+            
+            if existing.data:
+                # Update existing record
+                response = self.supabase.table('attacks').update({
+                    'uav': uav,
+                    'cruise': cruise,
+                    'ballistic': ballistic
+                }).eq('date', short_date).execute()
+            else:
+                # Insert new record
+                response = self.supabase.table('attacks').insert({
+                    'date': short_date,
+                    'uav': uav,
+                    'cruise': cruise,
+                    'ballistic': ballistic
+                }).execute()
+            
+            print(f"✅ Updated {short_date}: UAV={uav}, Cruise={cruise}, Ballistic={ballistic}")
             return True
             
         except Exception as e:

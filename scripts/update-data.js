@@ -102,28 +102,53 @@ function parseShortDate(shortDate, year = new Date().getFullYear()) {
 /**
  * Update or insert a single day's data
  */
-async function updateSingleDay(date, uav, cruise, ballistic) {
+async function updateSingleDay(dateStr, uav, cruise, ballistic) {
     try {
-        const { data, error } = await supabase
+        // Convert to short date format if it's a full date
+        const shortDate = dateStr.length > 6 ? formatDateShort(dateStr) : dateStr;
+        
+        // First, check if record exists
+        const { data: existing, error: selectError } = await supabase
             .from('attacks')
-            .upsert({
-                date: date,
-                uav: uav,
-                cruise: cruise,
-                ballistic: ballistic
-            }, {
-                onConflict: 'date'
-            });
+            .select('*')
+            .eq('date', shortDate)
+            .single();
 
+        let result;
+        if (selectError && selectError.code === 'PGRST116') {
+            // Record doesn't exist, insert it
+            result = await supabase
+                .from('attacks')
+                .insert({
+                    date: shortDate,
+                    uav: uav,
+                    cruise: cruise,
+                    ballistic: ballistic
+                });
+        } else if (existing) {
+            // Record exists, update it
+            result = await supabase
+                .from('attacks')
+                .update({
+                    uav: uav,
+                    cruise: cruise,
+                    ballistic: ballistic
+                })
+                .eq('date', shortDate);
+        } else {
+            throw selectError;
+        }
+
+        const { error } = result;
         if (error) {
-            console.error(`❌ Error updating ${date}:`, error.message);
+            console.error(`❌ Error updating ${shortDate}:`, error.message);
             return false;
         }
 
-        console.log(`✅ Updated ${date}: UAV=${uav}, Cruise=${cruise}, Ballistic=${ballistic}`);
+        console.log(`✅ Updated ${shortDate}: UAV=${uav}, Cruise=${cruise}, Ballistic=${ballistic}`);
         return true;
     } catch (err) {
-        console.error(`❌ Unexpected error updating ${date}:`, err);
+        console.error(`❌ Unexpected error updating ${dateStr}:`, err);
         return false;
     }
 }
@@ -142,9 +167,9 @@ async function bulkUpdate() {
         let errorCount = 0;
         
         for (const record of jsonData) {
-            const fullDate = parseShortDate(record.date);
+            // The JSON already has short date format, use it directly
             const success = await updateSingleDay(
-                fullDate,
+                record.date,
                 record.uav,
                 record.cruise,
                 record.ballistic
