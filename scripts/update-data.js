@@ -12,9 +12,15 @@
  *   node scripts/update-data.js --bulk             # Bulk update from JSON file
  */
 
-const { createClient } = require('@supabase/supabase-js');
-const fs = require('fs');
-const path = require('path');
+import { createClient } from '@supabase/supabase-js';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+import readline from 'readline';
+
+// Get __dirname equivalent for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Environment variables
 const SUPABASE_URL = process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL;
@@ -168,13 +174,13 @@ async function bulkUpdate() {
  * Interactive update for today or specific date
  */
 async function interactiveUpdate(date) {
-    const readline = require('readline').createInterface({
+    const rl = readline.createInterface({
         input: process.stdin,
         output: process.stdout
     });
     
     const ask = (question) => new Promise(resolve => {
-        readline.question(question, resolve);
+        rl.question(question, resolve);
     });
     
     try {
@@ -199,7 +205,7 @@ async function interactiveUpdate(date) {
         }
         
     } finally {
-        readline.close();
+        rl.close();
     }
 }
 
