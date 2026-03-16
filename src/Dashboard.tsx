@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { AreaChart, Area, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
-import { ShieldAlert, Target, Zap, AlertCircle, Phone, ExternalLink, Twitter, Github, TrendingDown } from "lucide-react";
+import { ShieldAlert, Target, Zap, AlertCircle, Phone, ExternalLink, Twitter, Github, TrendingDown, ChevronLeft, ChevronRight } from "lucide-react";
 import { fetchAttackData } from "./services/dataService";
 
 export default function Dashboard() {
   const [data, setData] = useState([]);
   const [isLogScale, setIsLogScale] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 10;
   
   useEffect(() => {
     fetchAttackData()
@@ -138,6 +140,122 @@ export default function Dashboard() {
             </span>
           </div>
         )}
+      </div>
+
+      {/* Detailed Data Table */}
+      <div className="bg-[#111] p-4 md:p-6 rounded-xl border border-white/10 mb-6 md:mb-8">
+        <h2 className="text-lg md:text-xl font-bold mb-4">Detailed Attack Data</h2>
+        
+        {(() => {
+          // Sort data in descending order (most recent first)
+          const sortedData = [...data].reverse();
+          
+          // Calculate pagination
+          const totalPages = Math.ceil(sortedData.length / itemsPerPage);
+          const startIndex = (currentPage - 1) * itemsPerPage;
+          const endIndex = startIndex + itemsPerPage;
+          const paginatedData = sortedData.slice(startIndex, endIndex);
+          
+          return (
+            <>
+              {/* Table for desktop */}
+              <div className="hidden md:block overflow-x-auto">
+                <table className="w-full text-left">
+                  <thead>
+                    <tr className="border-b border-white/10">
+                      <th className="pb-3 px-2 text-gray-400 font-medium">Date</th>
+                      <th className="pb-3 px-2 text-gray-400 font-medium text-right">UAV Drones</th>
+                      <th className="pb-3 px-2 text-gray-400 font-medium text-right">Cruise Missiles</th>
+                      <th className="pb-3 px-2 text-gray-400 font-medium text-right">Ballistic Missiles</th>
+                      <th className="pb-3 px-2 text-gray-400 font-medium text-right">Total</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {paginatedData.map((item, index) => {
+                      const total = item.uav + item.cruise + item.ballistic;
+                      return (
+                        <tr key={index} className="border-b border-white/5 hover:bg-white/5 transition-colors">
+                          <td className="py-3 px-2">{item.date}</td>
+                          <td className="py-3 px-2 text-right text-blue-400">{item.uav}</td>
+                          <td className="py-3 px-2 text-right text-orange-400">{item.cruise}</td>
+                          <td className="py-3 px-2 text-right text-red-400">{item.ballistic}</td>
+                          <td className="py-3 px-2 text-right font-semibold">{total}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+              
+              {/* Cards for mobile */}
+              <div className="md:hidden space-y-3">
+                {paginatedData.map((item, index) => {
+                  const total = item.uav + item.cruise + item.ballistic;
+                  return (
+                    <div key={index} className="bg-[#222] p-4 rounded-lg border border-white/10">
+                      <div className="flex justify-between items-center mb-3">
+                        <span className="font-semibold">{item.date}</span>
+                        <span className="text-sm text-gray-400">Total: <span className="font-semibold text-white">{total}</span></span>
+                      </div>
+                      <div className="grid grid-cols-3 gap-2 text-sm">
+                        <div className="text-center">
+                          <div className="text-blue-400 font-semibold">{item.uav}</div>
+                          <div className="text-xs text-gray-500">UAV</div>
+                        </div>
+                        <div className="text-center">
+                          <div className="text-orange-400 font-semibold">{item.cruise}</div>
+                          <div className="text-xs text-gray-500">Cruise</div>
+                        </div>
+                        <div className="text-center">
+                          <div className="text-red-400 font-semibold">{item.ballistic}</div>
+                          <div className="text-xs text-gray-500">Ballistic</div>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              
+              {/* Pagination controls */}
+              {totalPages > 1 && (
+                <div className="flex items-center justify-between mt-6 pt-6 border-t border-white/10">
+                  <button
+                    onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                    disabled={currentPage === 1}
+                    className={`flex items-center gap-1 px-3 py-1.5 rounded text-sm font-medium transition-colors ${
+                      currentPage === 1 
+                        ? 'bg-[#222] text-gray-600 cursor-not-allowed' 
+                        : 'bg-[#222] text-gray-400 hover:text-white hover:bg-[#333]'
+                    }`}
+                  >
+                    <ChevronLeft size={16} />
+                    Previous
+                  </button>
+                  
+                  <div className="flex items-center gap-2 text-sm">
+                    <span className="hidden sm:inline text-gray-400">Page</span>
+                    <span className="font-medium">{currentPage}</span>
+                    <span className="text-gray-400">of</span>
+                    <span className="font-medium">{totalPages}</span>
+                  </div>
+                  
+                  <button
+                    onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                    disabled={currentPage === totalPages}
+                    className={`flex items-center gap-1 px-3 py-1.5 rounded text-sm font-medium transition-colors ${
+                      currentPage === totalPages 
+                        ? 'bg-[#222] text-gray-600 cursor-not-allowed' 
+                        : 'bg-[#222] text-gray-400 hover:text-white hover:bg-[#333]'
+                    }`}
+                  >
+                    Next
+                    <ChevronRight size={16} />
+                  </button>
+                </div>
+              )}
+            </>
+          );
+        })()}
       </div>
 
       {/* Information Section */}
