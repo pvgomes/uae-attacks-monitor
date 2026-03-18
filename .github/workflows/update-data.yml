@@ -23,6 +23,11 @@ on:
         required: true
         default: '0'
         type: string
+      source-link:
+        description: 'Source link for the data'
+        required: true
+        default: 'https://www.instagram.com/modgovae/'
+        type: string
   
   # Schedule to run daily at 23:00 UTC (can be adjusted)
   # Uncomment the lines below to enable scheduled updates
@@ -70,6 +75,7 @@ jobs:
           const uav = parseInt('${{ inputs.uav }}');
           const cruise = parseInt('${{ inputs.cruise }}');
           const ballistic = parseInt('${{ inputs.ballistic }}');
+          const sourceLink = '${{ inputs.source-link }}';
           
           // Convert date to format used in database (e.g., "Mar 16")
           function formatDateShort(dateStr) {
@@ -102,7 +108,8 @@ jobs:
                   date: date,
                   uav: uav,
                   cruise: cruise,
-                  ballistic: ballistic
+                  ballistic: ballistic,
+                  source_link: sourceLink
                 });
             } else if (existing) {
               // Record exists, update it
@@ -111,7 +118,8 @@ jobs:
                 .update({
                   uav: uav,
                   cruise: cruise,
-                  ballistic: ballistic
+                  ballistic: ballistic,
+                  source_link: sourceLink
                 })
                 .eq('date', date);
             }
