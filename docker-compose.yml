@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    volumes:
+      - .:/app
+      - /app/node_modules # Prevent host node_modules from overriding container's
+    ports:
+      - "5173:5173"
+    environment:
+      - NODE_ENV=development
+    command: npm run dev -- --host
+    
+  # Service for running tests
+  test:
+    build: .
+    volumes:
+      - .:/app
+      - /app/node_modules
+    environment:
+      - NODE_ENV=test
+    command: npm test
+    
+  # Service for running any npm command
+  npm:
+    build: .
+    volumes:
+      - .:/app
+      - /app/node_modules
+    entrypoint: npm

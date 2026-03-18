@@ -1,1 +1,38 @@
-{"name":"uae-attacks-monitor","private":true,"version":"0.0.0","type":"module","scripts":{"dev":"vite","build":"vite build","preview":"vite preview"},"dependencies":{"@supabase/supabase-js":"^2.99.1","@tailwindcss/postcss":"latest","lucide-react":"latest","react":"latest","react-dom":"latest","react-router-dom":"^7.13.1","recharts":"latest"},"devDependencies":{"@types/react":"latest","@types/react-dom":"latest","@vitejs/plugin-react":"latest","autoprefixer":"latest","postcss":"latest","tailwindcss":"latest","typescript":"latest","vite":"latest"}}
+{
+  "name": "uae-attacks-monitor",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:coverage": "vitest --coverage"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.99.1",
+    "@tailwindcss/postcss": "latest",
+    "lucide-react": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "react-router-dom": "^7.13.1",
+    "recharts": "latest"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.1.5",
+    "@testing-library/react": "^14.1.2",
+    "@testing-library/user-event": "^14.5.1",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "@vitejs/plugin-react": "latest",
+    "autoprefixer": "latest",
+    "jsdom": "^23.0.1",
+    "postcss": "latest",
+    "tailwindcss": "latest",
+    "typescript": "latest",
+    "vite": "latest",
+    "vitest": "^1.0.4"
+  }
+}
